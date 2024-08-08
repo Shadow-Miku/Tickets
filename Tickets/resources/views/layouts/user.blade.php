@@ -49,7 +49,7 @@
                                 <div>
                                     <button x-on:click="show = !show" type="button" class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                                         <span class="sr-only">Open user menu</span>
-                                        <img class="h-8 w-8 rounded-full" src="https://th.bing.com/th/id/OIP.UBjQ8XOVTC4GenAD0vJTnAHaNK?rs=1&pid=ImgDetMain" alt="">
+                                        <img src="{{ asset('storage/' . Auth::user()->url) }}"alt="Profle img" class="h-14 rounded-full">
                                         <span class="ml-4 text-sm hidden md:inline-block text-white">{{ auth()->user()->name }}</span>
                                     </button>
                                 </div>
@@ -96,7 +96,7 @@
                 <div class="pt-4 pb-3 border-t border-gray-700">
                     <div class="flex items-center px-5">
                         <div class="flex-shrink-0">
-                            <img class="h-10 w-10 rounded-full" src="{{ auth()->user()->url }}" alt="">
+                            <img src="{{ asset('storage/' . Auth::user()->url) }}"alt="Profle img" class="h-14 rounded-full">
                         </div>
                         <div class="ml-3">
                             <div class="text-base font-medium leading-none text-white">{{ auth()->user()->name }}</div>

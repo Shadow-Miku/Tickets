@@ -23,8 +23,14 @@ class User extends Authenticatable
         'email',
         'password',
         'type',
-        'url'
+        'url',
+        'divisionid'
     ];
+
+    public function division()
+    {
+        return $this->belongsTo(Division::class, 'divisionid');
+    }
 
     protected function type(): Attribute
     {

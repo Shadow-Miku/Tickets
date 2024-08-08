@@ -15,7 +15,8 @@
     <link rel="icon" href="{{ asset('img/arengee_penetrael_dgr_icon.ico') }}" type="image/x-icon">
 </head>
 
-<body> <!-- Top Menu -->
+<body>
+    <!-- Top Menu -->
     <header class="px-4 py-2 shadow">
         <div class="flex justify-between">
             <div class="flex items-center">
@@ -58,9 +59,10 @@
                     </svg>
                 </button>
 
-                <button data-dropdown class="flex items-center px-3 py-2 focus:outline-none hover:bg-gray-200 hover:rounded-md" type="button" x-data="{ open: false }" @click="open = true" :class="{ 'bg-gray-200 rounded-md': open }">
-                    <img src="https://animecorner.me/wp-content/uploads/2022/10/oshi-no-ko-kv.jpg" alt="Profle" class="h-10 w-10 rounded-full">
-                    <!-- Nombre del usuario src="{{ auth()->user()->url }}"-->
+                <button data-dropdown class="flex items-center px-2 py-1 rounded-full hover:bg-gray-200 focus:outline-none relative" type="button" x-data="{ open: false }" @click="open = true" :class="{ 'bg-gray-200 rounded-md': open }">
+                    <!-- User Name -->
+                    <img src="{{ asset('storage/' . Auth::user()->url) }}"alt="Profle img" class="h-14 rounded-full">
+                    <!-- User Image -->
                     <span class="ml-4 text-sm hidden md:inline-block">{{ auth()->user()->name }}</span>
                     <svg class="fill-current w-3 ml-4" viewBox="0 0 407.437 407.437">
                         <path d="M386.258 91.567l-182.54 181.945L21.179 91.567 0 112.815 203.718 315.87l203.719-203.055z" />
@@ -68,7 +70,7 @@
 
                     <div data-dropdown-items class="text-sm text-left absolute top-0 right-0 mt-16 mr-4 bg-white rounded border border-gray-400 shadow" x-show="open" @click.away="open = false">
                         <ul>
-                            <li class="px-4 py-3 border-b hover:bg-gray-200"><a href="#">My Profile</a></li>
+                            <li class="px-4 py-3 border-b hover:bg-gray-200"><a href="{{ route('admin/profile') }}">My Profile</a></li>
                             <li class="px-4 py-3 border-b hover:bg-gray-200"><a href="#">Settings</a></li>
                             <li class="px-4 py-3 hover:bg-gray-200"><a href="{{ route('logout') }}">Log out</a></li>
                         </ul>
@@ -98,14 +100,14 @@
                     </div>
                 </a>
 
-                <a href="#">
+                <a href="{{ route('admin/users') }}">
                     <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
                         <i class="bi bi-people"></i>
                         <span class="text-[15px] ml-4 text-gray-200 font-bold">Users</span>
                     </div>
                 </a>
 
-                <a href="#">
+                <a href="{{ route('admin/divisions') }}">
                     <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
                         <i class='bx bxs-pyramid'></i>
                         <span class="text-[15px] ml-4 text-gray-200 font-bold">Divisions</span>

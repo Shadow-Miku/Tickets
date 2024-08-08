@@ -17,8 +17,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->unsignedTinyInteger('type')->default(0);; //add type boolean Users: 0=>User, 1=>Admin, 2=>Assistant;
+            $table->unsignedTinyInteger('type')->default(0); //add type boolean Users: 0=>User, 1=>Admin, 2=>Assistant;
             $table->string('url')->nullable();
+            $table->foreignId('divisionid')->nullable()->constrained('divisions')->onDelete('cascade'); // Division is null due to not have been assigned one
             $table->rememberToken();
             $table->timestamps();
         });

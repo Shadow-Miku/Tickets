@@ -59,7 +59,7 @@
                 </button>
 
                 <button data-dropdown class="flex items-center px-3 py-2 focus:outline-none hover:bg-gray-200 hover:rounded-md" type="button" x-data="{ open: false }" @click="open = true" :class="{ 'bg-gray-200 rounded-md': open }">
-                    <img src="https://animecorner.me/wp-content/uploads/2022/10/oshi-no-ko-kv.jpg" alt="Profle" class="h-10 w-10 rounded-full">
+                    <img src="{{ asset('storage/' . Auth::user()->url) }}"alt="Profle img" class="h-14 rounded-full">
                     <!-- Nombre del usuario src="{{ auth()->user()->url }}"-->
                     <span class="ml-4 text-sm hidden md:inline-block">{{ auth()->user()->name }}</span>
                     <svg class="fill-current w-3 ml-4" viewBox="0 0 407.437 407.437">
