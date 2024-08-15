@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Division;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -16,7 +17,8 @@ class AllUsersController extends Controller
     {
         $users = User::all();
         $currentUserId = auth()->user()->id; // Authenticated User ID
-        return view('users.index', compact('users','currentUserId'));
+        $division = \App\Models\Division::all();
+        return view('users.index', compact('users','currentUserId','division'));
     }
 
     /**
@@ -56,18 +58,7 @@ class AllUsersController extends Controller
             'divisionid' => $request->divisionid
         ]);
 
-        return redirect()->route('admin/users')->with('success', 'Usuario registrado con éxito');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $user = User::findOrFail($id);
-        $division = $user->division;
-
-        return view('users.show', compact('user','division'));
+        return redirect()->route('admin/users')->with('success', 'User created successfully.');
     }
 
     /**
@@ -125,7 +116,7 @@ class AllUsersController extends Controller
         // Save changes
         $user->save();
 
-        return redirect()->route('admin/users')->with('success', 'Usuario actualizado con éxito');
+        return redirect()->route('admin/users')->with('success', 'User updated successfully.');
     }
 
 

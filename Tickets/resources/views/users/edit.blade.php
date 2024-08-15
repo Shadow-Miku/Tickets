@@ -8,42 +8,41 @@
     <form action="{{ route('admin/users/update', $user->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        <div class="grid grid-cols-2 gap-6">
+        <div class="row g-3">
             <!-- Left Column: Form -->
-            <div class="space-y-4">
-
-                <div class="mb-4">
-                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                    <input type="text" name="name" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" value="{{ $user->name }}" required>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="name" class="form-label" style="font-weight: bold;">Name</label>
+                    <input type="text" name="name" id="name" class="form-control" value="{{ $user->name }}" required>
                 </div>
 
-                <div class="mb-4">
-                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" name="email" id="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" value="{{ $user->email }}" required>
+                <div class="mb-3">
+                    <label for="email" class="form-label" style="font-weight: bold;">Email</label>
+                    <input type="email" name="email" id="email" class="form-control" value="{{ $user->email }}" required>
                 </div>
 
-                <div class="mb-4">
-                    <label for="password" class="block text-sm font-medium text-gray-700">Password (leave blank if not changing)</label>
-                    <input type="password" name="password" id="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <div class="mb-3">
+                    <label for="password" class="form-label" style="font-weight: bold;">Password (leave blank if not changing)</label>
+                    <input type="password" name="password" id="password" class="form-control">
                 </div>
 
-                <div class="mb-4">
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                    <input type="password" name="password_confirmation" id="password_confirmation" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                <div class="mb-3">
+                    <label for="password_confirmation" class="form-label" style="font-weight: bold;">Confirm Password</label>
+                    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
                 </div>
 
-                <div class="mb-4">
-                    <label for="type" class="block text-sm font-medium text-gray-700">Type</label>
-                    <select name="type" id="type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required data-selected-value="{{ $user->type }}">
+                <div class="mb-3">
+                    <label for="type" class="form-label" style="font-weight: bold;">Type</label>
+                    <select name="type" id="type" class="form-select" required data-selected-value="{{ $user->type }}">
                         <option value="0" data-display-value="User">User</option>
                         <option value="1" data-display-value="Admin">Admin</option>
                         <option value="2" data-display-value="Assistant">Assistant</option>
                     </select>
                 </div>
 
-                <div class="mb-4">
-                    <label for="divisionid" class="block text-sm font-medium text-gray-700">Division</label>
-                    <select id="divisionid" name="divisionid" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
+                <div class="mb-3">
+                    <label for="divisionid" class="form-label" style="font-weight: bold;">Division</label>
+                    <select id="divisionid" name="divisionid" class="form-select" required>
                         @foreach($divisions as $div)
                             <option value="{{ $div->id }}" {{ $user->divisionid == $div->id ? 'selected' : '' }}>
                                 {{ $div->name }}
@@ -52,23 +51,21 @@
                     </select>
                 </div>
 
-                <div class="mb-4">
-                    <label for="url" class="block text-sm font-medium text-gray-700">Image</label>
-                    <div class="mt-2">
-                        <input type="file" id="url" name="url" class="block w-full text-gray-900" onchange="previewImage(this)">
-                    </div>
+                <div class="mb-3">
+                    <label for="url" class="form-label" style="font-weight: bold;">Image</label>
+                    <input type="file" id="url" name="url" class="form-control" onchange="previewImage(this)">
                 </div>
-                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Update</button>
-                <a id="backButton" href="{{ url()->previous() }}" class="flex-shrink-0 ml-4 rounded-md bg-gray-500 px-4 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500">Return</a>
+
+                <button type="submit" class="btn btn-primary">Update</button>
+                <a id="backButton" href="{{ url()->previous() }}" class="btn btn-secondary ms-2">Return</a>
             </div>
 
             <!-- Right Column: Image Preview -->
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Current Image</label>
-                    <div class="mt-2">
-                        <img id="imagePreview" src="{{ asset('storage/' . $user->url) }}" alt="Current Image" class="w-full h-auto rounded-md border border-gray-300">
-                    </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label id="imageLabel" class="form-label" style="font-weight: bold;">Current Image</label>
+                    <br>
+                    <img id="imagePreview" src="{{ asset('storage/' . $user->url) }}" alt="Current Image" class="img-fluid rounded border">
                 </div>
             </div>
         </div>
@@ -79,16 +76,18 @@
     function previewImage(input) {
         const file = input.files[0];
         const preview = document.getElementById('imagePreview');
+        const label = document.getElementById('imageLabel');
         if (file) {
             const reader = new FileReader();
             reader.onload = function (e) {
                 preview.src = e.target.result;
+                label.textContent = 'Preview'; // Cambia el texto a "Preview"
             };
             reader.readAsDataURL(file);
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() { style="font-weight: bold;"
         const preview = document.getElementById('imagePreview');
         preview.src = "{{ asset('storage/' . $user->url) }}";
     });
@@ -107,6 +106,6 @@
             select.value = '0';
         }
     });
-
 </script>
+
 @endsection
