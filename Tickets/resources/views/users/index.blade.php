@@ -28,33 +28,39 @@
         </thead>
         <tbody>
             @if($users->count() > 0)
-            @foreach ($users as $user)
-            <tr>
-                <th scope="row">{{ $loop->iteration }}</th>
-                <td>{{ $user->name }}</td>
-                <td>{{ $user->email }}</td>
-                <td class="text-capitalize">{{ $user->type }}</td>
-                <td>
-                    <a href="#" class="text-info text-decoration-none" data-bs-toggle="modal" data-bs-target="#userModal{{ $user->id }}">
-                        <i class="fas fa-info-circle"></i> Details
-                    </a>
-                    <a href="{{ route('admin/users/edit', $user->id) }}" class="text-warning text-decoration-none ms-3">
-                        <i class="fas fa-edit"></i> Edit
-                    </a>
-                    @if ($user->id !== $currentUserId)
-                        <form action="{{ route('admin/users/destroy', $user->id) }}" method="POST" onsubmit="return confirm('Delete?')" style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-link text-danger text-decoration-none ms-3 p-0">
-                                <i class="fas fa-trash-alt"></i> Delete
-                            </button>
-                        </form>
-                    @endif
-                </td>
-            </tr>
-            @endforeach
+                @foreach ($users as $user)
+                <tr>
+                    <th scope="row">{{ $loop->iteration }}</th>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td class="text-capitalize">{{ $user->type }}</td>
+                    <td class="w-25">
+                        <div class="d-flex gap-2">
+                            <a href="#" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#userModal{{ $user->id }}">
+                                <i class="fas fa-info-circle"></i> Details
+                            </a>
+                            <a href="{{ route('admin/users/edit', $user->id) }}" class="btn btn-outline-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            @if ($user->id !== $currentUserId)
+                                <form action="{{ route('admin/users/destroy', $user->id) }}" method="POST" onsubmit="return confirm('Delete?')" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            @else
+                <tr>
+                    <td class="text-center" colspan="5">No users registered</td>
+                </tr>
+            @endif
         </tbody>
-        @endif
     </table>
 </div>
 
@@ -71,28 +77,28 @@
         <!-- Left Column: Info -->
         <div class="w-50 me-3">
             <div class="mb-3">
-                <label class="form-label" style="font-weight: bold;">Full Name</label>
+                <label class="form-label fw-bold">Full Name</label>
                 <p>{{ $user->name }}</p>
             </div>
 
             <div class="mb-3">
-                <label class="form-label" style="font-weight: bold;">Email</label>
+                <label class="form-label fw-bold">Email</label>
                 <p>{{ $user->email }}</p>
             </div>
 
             <div class="mb-3">
-                <label class="form-label" style="font-weight: bold;">Rank</label>
-                <p style="text-transform: capitalize;">{{ $user->type }}</p>
+                <label class="form-label fw-bold">Rank</label>
+                <p class="text-capitalize">{{ $user->type }}</p>
             </div>
 
             <div class="mb-3">
-                <label class="form-label" style="font-weight: bold;">Division</label>
+                <label class="form-label fw-bold">Division</label>
                 <p>{{$user->division->name ?? 'No division'}}</p>
             </div>
         </div>
         <!-- Right Column: Image -->
         <div class="w-50">
-            <label class="form-label" style="font-weight: bold;">Profile Image</label>
+            <label class="form-label fw-bold">Profile Image</label>
             <br>
             <img src="{{ asset('storage/' . $user->url) }}" alt="Profile Image" class="img-fluid">
         </div>
@@ -104,12 +110,5 @@
   </div>
 </div>
 @endforeach
-
-<!-- Import Bootstrap CSS -->
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- Import Bootstrap JS (necessary for modals) -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/js/bootstrap.min.js"></script>
 
 @endsection

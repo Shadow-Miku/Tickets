@@ -3,7 +3,7 @@
 @section('title', 'Modify Tickets')
 
 @section('contents')
-<h1 class="font-bold text-2xl ml-3">Registrar libreta</h1>
+<h1 class="font-bold text-2xl ml-3">Update Ticket</h1>
 <hr/>
 <div class="border-b border-gray-900/10 pb-12">
     <div class="mt-10 flex">
@@ -38,7 +38,7 @@
                 <div class="sm:col-span-4">
                     <label class="block text-sm font-medium leading-6 text-gray-900">Details</label>
                     <div class="mt-2">
-                        <input id="details" name="details" type="text" value={{$ticket->details}} class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                       <textarea id="details" name="details" class="form-control" rows="3" placeholder="Provide details about the issue">{{$ticket->details}}</textarea>
                     </div>
                 </div>
 

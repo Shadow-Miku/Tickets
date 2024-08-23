@@ -40,6 +40,7 @@
                         </td>
                         <td class="px-6 py-4 w-36">
                             <div class="flex items-center space-x-2">
+                                {{-- Button to view the ticket details --}}
                                 <a href="#" class="text-blue-400 hover:text-blue-800" data-bs-toggle="modal" data-bs-target="#ticketModal"
                                    data-ticket-id="{{ $tk->id }}"
                                    data-clasification="{{ $tk->clasification }}"
@@ -49,17 +50,28 @@
                                    data-observation="{{ $tk->observation }}">
                                     Details
                                 </a>
-                                @if($tk->status !== 'Cancelled' && $tk->status !== 'Assigned')
+
+                                {{-- Button to view the assistant's reply --}}
+                                @if($tk->status !== 'Cancelled'  && $tk->status !== 'Never Solved' && $tk->status !== 'Completed')
+                                    @if($tk->assignment && $tk->assignment->chat)
+                                        <a href="#" class="text-yellow-400 hover:text-yellow-800" data-bs-toggle="modal" data-bs-target="#answerModal"
+                                            data-answer="{{ $tk->assignment->chat->first()->answer }}"
+                                            data-chat-id="{{ $tk->assignment->chat->first()->id }}">
+                                            Reply
+                                        </a>
+                                    @endif
+                                @endif
+                                {{-- Buttons to edit or delete the ticket if the ticket is not in the cancelled, assigned or in process status --}}
+                                @if($tk->status !== 'Cancelled' && $tk->status !== 'Assigned' && $tk->status !== 'In process')
                                     <a href="{{ route('user/tickets/edit', $tk->id)}}" class="text-green-400 hover:text-green-800">Edit</a>
-                                    <form action="{{ route('user/tickets/cancell', $tk->id) }}" method="PUT" onsubmit="return confirm('Delete?')" class="inline-block text-red-600 hover:text-red-800">
+                                    <form action="{{ route('user/tickets/cancell', $tk->id) }}" method="POST" onsubmit="return confirm('Are you sure?')" class="inline-block text-red-600 hover:text-red-800">
                                         @csrf
+                                        @method('PUT')
                                         <button type="submit">Delete</button>
                                     </form>
                                 @else
                                     <a class="text-green-800 cursor-not-allowed">Edit</a>
-                                    <form class="inline-block text-red-800 cursor-not-allowed">
-                                        <button type="button" disabled class="cursor-not-allowed">Delete</button>
-                                    </form>
+                                    <button type="button" disabled class="cursor-not-allowed inline-block text-red-800">Delete</button>
                                 @endif
                             </div>
                         </td>
@@ -67,13 +79,13 @@
                 @endforeach
             @else
                 <tr>
-                    <td class="text-center px-6 py-4" colspan="5">No Tickets registered</td>
+                    <td class="text-center px-6 py-4" colspan="4">No Tickets registered</td>
                 </tr>
             @endif
         </tbody>
     </table>
 
-<!-- Modal -->
+    <!-- Modal for ticket details -->
     <div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -94,28 +106,54 @@
         </div>
     </div>
 
+   <!-- Chat Modal -->
+    <div class="modal fade" id="answerModal" tabindex="-1" aria-labelledby="answerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="answerModalLabel">Answer from the Support Team</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="answerText"></p>
+                </div>
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#replyModal"
+                                data-chat-id="" id="replyButton">
+                            Reply
+                        </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="replyModalLabel">Reply to the Support Team</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('user.chats.reply') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="chat_id" id="chatId">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="comentary" class="form-label">Your Comment</label>
+                            <textarea class="form-control" id="comentary" name="comentary" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Send Reply</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var ticketModal = document.getElementById('ticketModal');
-        ticketModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget;
-            var ticketId = button.getAttribute('data-ticket-id');
-            var clasification = button.getAttribute('data-clasification');
-            var details = button.getAttribute('data-details');
-            var status = button.getAttribute('data-status');
-
-            var modalTicketId = ticketModal.querySelector('#modal-ticket-id');
-            var modalClasification = ticketModal.querySelector('#modal-clasification');
-            var modalDetails = ticketModal.querySelector('#modal-details');
-            var modalStatus = ticketModal.querySelector('#modal-status');
-
-            modalTicketId.textContent = ticketId;
-            modalClasification.textContent = clasification;
-            modalDetails.textContent = details;
-            modalStatus.textContent = status;
-        });
-    });
-</script>
 @endsection

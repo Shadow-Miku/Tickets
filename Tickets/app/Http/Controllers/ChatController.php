@@ -2,63 +2,51 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Chat;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function reply(Request $request) // User reply field: (commentary)
     {
-        //
+        $request->validate([
+            'chat_id' => 'required|exists:chats,id',
+            'comentary' => 'required|string|max:255',
+        ]);
+
+        $chat = Chat::findOrFail($request->chat_id);
+        $chat->comentary = $request->comentary;
+        $chat->save();
+
+        return redirect()->route('user/tickets')->with('success', 'Reply sent successfully');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function answer(Request $request) // Assistant reply field: (answer)
     {
-        //
+        $request->validate([
+            'chat_id' => 'required|exists:chats,id',
+            'answer' => 'required|string|max:255',
+        ]);
+
+        $chat = Chat::findOrFail($request->chat_id);
+        $chat->answer = $request->answer;
+        $chat->save();
+
+        return redirect()->route('assistant/tickets')->with('success', 'Reply sent successfully');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function observation(Request $request) // Admin reply field: (obervation)
     {
-        //
+        $request->validate([
+            'chat_id' => 'required|exists:chats,id',
+            'observation' => 'required|string|max:255',
+        ]);
+
+        $chat = Chat::findOrFail($request->chat_id);
+        $chat->observation = $request->observation;
+        $chat->save();
+
+        return redirect()->route('admin/assignedtickets')->with('success', 'Obervation sent successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

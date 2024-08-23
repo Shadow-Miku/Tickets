@@ -1,15 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AllUsersController;
 use App\Http\Controllers\AssignmentController;
-use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\ChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,8 +25,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-Route::get('/about', [UserController::class, 'about'])->name('about');
-
 Route::controller(AuthController::class)->group(function () {
     Route::get('register', 'register')->name('register');
     Route::post('register', 'registerSave')->name('register.save');
@@ -39,12 +35,14 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('logout', 'logout')->middleware('auth')->name('logout');
 });
 
-// USER ROUTES
+////////////////////// USER ROUTES //////////////////////
 Route::middleware(['auth', 'user-access:user'])->group(function () {
     // User Home
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     // User profile
-    Route::get('/profile', [UserController::class, 'userprofile'])->name('profile');
+    Route::get('/profile', [AllUsersController::class, 'userprofile'])->name('profile');
+    Route::put('/user/profile/update/{id}', [AllUsersController::class, 'updateUser'])->name('user/profile/update');
+
     // User Tickets
     Route::get('/user/tickets', [TicketController::class, 'indexUser'])->name('user/tickets');
     Route::get('/user/tickets/create', [TicketController::class, 'create'])->name('user/tickets/create');
@@ -53,36 +51,43 @@ Route::middleware(['auth', 'user-access:user'])->group(function () {
     Route::get('/user/tickets/edit/{id}', [TicketController::class, 'editUser'])->name('user/tickets/edit');
     Route::put('/user/tickets/update/{id}', [TicketController::class, 'update'])->name('user/tickets/update');
     Route::get('/user/tickets/cancell/{id}', [TicketController::class, 'cancell'])->name('user/tickets/cancell');
+    Route::post('/user/chats/reply', [ChatController::class, 'reply'])->name('user.chats.reply');
 });
 
 
 
-// ASSISTANT ROUTES
+////////////////////// ASSISTANT ROUTES //////////////////////
 Route::middleware(['auth', 'user-access:assistant'])->group(function () {
     // Assistant Home
     Route::get('/assistant/landing', [HomeController::class, 'assistantHome'])->name('assistant/landing');
     // Assistant profile
-    Route::get('/assistant/profile', [AssistantController::class, 'assistantprofilepage'])->name('assistant/profile');
+    Route::get('/assistant/profile', [AllUsersController::class, 'assistantprofilepage'])->name('assistant/profile');
+    Route::put('/assistant/profile/update/{id}', [AllUsersController::class, 'updateAssistant'])->name('assistant/profile/update');
+
     // Assignment Tickets Managment
     Route::get('/assistant/tickets', [AssignmentController::class, 'indexAssignedAssistant'])->name('assistant/tickets');
+    Route::get('/assistant/tickets/edit/{id}', [AssignmentController::class, 'attend'])->name('assistant/tickets/attend');
+    Route::put('/assistant/tickets/update/{id}', [AssignmentController::class, 'updateAttend'])->name('assistant/tickets/updateAttend');
+    Route::post('/assistant/chats/answer', [ChatController::class, 'answer'])->name('assistant.chats.answer');
+
 });
 
 
 
-// ADMIN ROUTES
+////////////////////// ADMIN ROUTES //////////////////////
 Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Admin Home
     Route::get('/admin/home', [HomeController::class, 'adminHome'])->name('admin/home');
 
     // Admin profile
-    Route::get('/admin/profile', [AdminController::class, 'profilepage'])->name('admin/profile');
+    Route::get('/admin/profile', [AllUsersController::class, 'profilepage'])->name('admin/profile');
+    Route::put('/admin/profile/update/{id}', [AllUsersController::class, 'updateAdmin'])->name('admin/profile/update');
 
     // Division Managment
     Route::get('/admin/divisions', [DivisionController::class, 'index'])->name('admin/divisions');
-    Route::get('/admin/divisions/create', [DivisionController::class, 'create'])->name('admin/divisions/create');
-    Route::post('/admin/divisions/store', [DivisionController::class, 'store'])->name('admin/divisions/store');
-    Route::get('/admin/divisions/edit/{id}', [DivisionController::class, 'edit'])->name('admin/divisions/edit');
-    Route::put('/admin/divisions/edit/{id}', [DivisionController::class, 'update'])->name('admin/divisions/update');
+    Route::post('/admin/divisions/store', [DivisionController::class, 'store'])->name('admin.divisions.store');
+    Route::put('/admin/divisions/update/{id}', [DivisionController::class, 'update'])->name('admin.divisions.update');
+
     Route::delete('/admin/divisions/destroy/{id}', [DivisionController::class, 'destroy'])->name('admin/divisions/destroy');
 
     // Users Managment
@@ -99,6 +104,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Assigment Managment
     Route::get('/admin/tickets/assignAdmin/{id}', [AssignmentController::class, 'assignAdmin'])->name('admin/tickets/assignAdmin'); // create
     Route::post('/admin/tickets/storeAssigment', [AssignmentController::class, 'storeAssigment'])->name('admin/tickets/storeAssigment'); // store
+    Route::post('/admin/chats/obervation', [ChatController::class, 'observation'])->name('admin.chats.observation');
 
 });
 

@@ -8,9 +8,6 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>@yield('title')</title>
-    <!-- Delete -->
-
-
     <!-- Import Bootstrap CSS and JS for modals -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -47,19 +44,25 @@
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">5</span>
                 </button>
                 <!-- User Dropdown -->
-                <div class="dropdown">
-                    <button class="btn d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="btn-group">
+                    <!-- Profile image button (deploys modal) -->
+                    <button type="button" class="btn" id="profileImageButton">
                         <img src="{{ asset('storage/' . Auth::user()->url) }}" alt="Profile Image" class="rounded-circle" width="40" height="40">
-                        <span class="ms-2 d-none d-md-inline-block">{{ auth()->user()->name }}</span>
-                        <i class="bi bi-chevron-down ms-2"></i>
                     </button>
+
+                    <!-- Dropdown button (deployed by name) -->
+                    <button type="button" class="btn dropdown-toggle dropdown-toggle-split d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="me-2 d-none d-md-inline-block text-black">{{ auth()->user()->name }}</span>
+                    </button>
+
+                    <!-- Deployed menu -->
                     <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="{{ route('admin/profile') }}"><i class="bi bi-person-circle me-2"></i>My Profile</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-gear-fill me-2"></i>Settings</a></li>
+                        <li><a class="dropdown-item" @disabled(true)><i class="bi bi-gear-fill me-2"></i>Settings</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="{{ route('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Log out</a></li>
                     </ul>
                 </div>
+
             </div>
         </div>
     </header>

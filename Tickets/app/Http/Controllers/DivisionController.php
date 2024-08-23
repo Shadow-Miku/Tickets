@@ -12,9 +12,9 @@ class DivisionController extends Controller
      */
     public function index()
     {
-        $division = Division::orderBy('created_at', 'DESC')->get();
+        $divisions = Division::orderBy('created_at', 'DESC')->get();
 
-        return view('divisions.index', compact('division'));
+        return view('divisions.index', compact('divisions'));
     }
 
     /**
@@ -58,14 +58,15 @@ class DivisionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $division = Division::findOrFail($id);
+        $division->name = $request->input('name');
+        $division->save();
 
-        $division->update($request->all());
-
-        return redirect()->route('admin/divisions')->with('success', 'Division updated successfully');
+        return redirect()->route('admin/divisions')->with('updated', 'Division updated');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -76,6 +77,6 @@ class DivisionController extends Controller
 
         $division->delete();
 
-        return redirect()->route('admin/divisions')->with('success', 'Division deleted successfully');
+        return redirect()->route('admin/divisions')->with('deleted', 'Division deleted');
     }
 }

@@ -3,80 +3,126 @@
 @section('title', 'Assigned Tickets')
 
 @section('contents')
-<div class="p-6">
-    <div class="flex justify-between items-center mb-4">
-        <h1 class="font-bold text-2xl">Assigned Tickets</h1>
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 fw-bold">Assigned Tickets</h1>
     </div>
     <hr class="mb-4"/>
 
-    <form method="GET" action="{{ route('assistant/tickets') }}" class="mb-4 flex space-x-4">
-        <select name="division" class="border rounded p-2">
-            <option value="">Select Division</option>
-            @foreach($divisions as $division)
-                <option value="{{ $division->id }}" {{ request('division') == $division->id ? 'selected' : '' }}>
-                    {{ $division->name }}
-                </option>
-            @endforeach
-        </select>
+    <!-- Search form -->
 
-        <input type="text" name="author" placeholder="Author" value="{{ request('author') }}" class="border rounded p-2" />
+    <form method="GET" action="{{ route('assistant/tickets') }}" class="row g-3 mb-4">
+        <div class="col-md-2">
+            <select name="division" class="form-select">
+                <option value="">Select Division</option>
+                @foreach($divisions as $division)
+                    <option value="{{ $division->id }}" {{ request('division') == $division->id ? 'selected' : '' }}>
+                        {{ $division->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-        <input type="date" name="start_date" value="{{ request('start_date') }}" class="border rounded p-2" />
-        <input type="date" name="end_date" value="{{ request('end_date') }}" class="border rounded p-2" />
+        <div class="col-md-2">
+            <select name="status" class="form-select">
+                <option value="">Select Status</option>
+                <option value="Assigned" {{ request('status') == 'Assigned' ? 'selected' : '' }}>Assigned</option>
+                <option value="In process" {{ request('status') == 'In process' ? 'selected' : '' }}>In process</option>
+                <option value="Cancelled" {{ request('status') == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                <option value="Never Solved" {{ request('status') == 'Never Solved' ? 'selected' : '' }}>Never Solved</option>
+                <option value="Completed" {{ request('status') == 'Completed' ? 'selected' : '' }}>Completed</option>
+            </select>
+        </div>
 
-        <button type="submit" class="bg-blue-500 text-white rounded p-2">Search</button>
+        <div class="col-md-2">
+            <input type="text" name="author" placeholder="Author" value="{{ request('author') }}" class="form-control" />
+        </div>
+
+        <div class="col-md-2">
+            <input type="date" name="start_date" value="{{ request('start_date') }}" class="form-control" />
+        </div>
+
+        <div class="col-md-2">
+            <input type="date" name="end_date" value="{{ request('end_date') }}" class="form-control" />
+        </div>
+
+        <div class="col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
     </form>
 
+    <!-- Alerts -->
+
     @if(Session::has('success'))
-    <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
-        {{ Session::get('success') }}
-    </div>
+        <div class="alert alert-success d-flex align-items-center" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+              </svg>
+            <div>
+                {{ Session::get('success') }}
+            </div>
+        </div>
     @endif
 
-    <table class="table">
+    <!-- Tickets Table -->
+    <table class="table table-striped table-hover">
         <thead>
             <tr>
                 <th>#</th>
                 <th>Clasification</th>
-                <th>Autor</th>
+                <th>Author</th>
                 <th>Created at</th>
-                <th>Accions</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             @if($tickets->count() > 0)
-            @foreach($tickets as $ticket)
+                @foreach($tickets as $ticket)
+                    <tr>
+                        <th scope="row">{{ $loop->iteration }}</th>
+                        <td>{{ $ticket->clasification }}</td>
+                        <td>{{ $ticket->author->name }}</td>
+                        <td>{{ $ticket->created_at }}</td>
+                        <td>
+                            <a href="#" class="btn btn-link text-primary" data-bs-toggle="modal" data-bs-target="#assignmentModal"
+                               data-ticket-id="{{ $ticket->id }}"
+                               data-clasification="{{ $ticket->clasification }}"
+                               data-details="{{ $ticket->details }}"
+                               data-status="{{ $ticket->status }}"
+                               data-author="{{ $ticket->author->name }}"
+                               data-accountable-name="{{ $ticket->assignment->accountable->name ?? 'N/A' }}"
+                               data-division-name="{{ $ticket->author->division->name ?? 'N/A' }}"
+                               data-created-at="{{ $ticket->created_at }}"
+                               data-updated-at="{{ $ticket->updated_at }}">
+                                View Assignment
+                            </a>
+                            @if($ticket->status !== 'Cancelled'  && $ticket->status !== 'Never Solved' && $ticket->status !== 'Completed')
+                                @if($ticket->assignment && $ticket->assignment->chat)
+                                        <a href="#" class="btn btn-link text-primary" data-bs-toggle="modal" data-bs-target="#answerModal"
+                                            data-answer="{{ $ticket->assignment->chat->first()->answer }}"
+                                            data-coment="{{ $ticket->assignment->chat->first()->comentary }}"
+                                            data-observation="{{ $ticket->assignment->chat->first()->observation }}"
+                                            data-chat-id="{{ $ticket->assignment->chat->first()->id }}">
+                                            Chat
+                                        </a>
+                                @endif
+                            @endif
+                            @if($ticket->status !== 'Cancelled'  && $ticket->status !== 'Never Solved' && $ticket->status !== 'Completed')
+                                <a href="{{ route('assistant/tickets/attend', $ticket->id) }}" class="btn btn-link text-primary">Solve ticket</a>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            @else
                 <tr>
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                        {{ $loop->iteration }}
-                    </th>
-                    <td>{{ $ticket->clasification }}</td>
-                    <td>{{ $ticket->author->name }}</td>
-                    <td>{{ $ticket->created_at }}</td>
-                    <td>
-                        <a href="#" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#assignmentModal"
-                           data-ticket-id="{{ $ticket->id }}"
-                           data-clasification="{{ $ticket->clasification }}"
-                           data-details="{{ $ticket->details }}"
-                           data-status="{{ $ticket->status }}"
-                           data-author="{{ $ticket->author->name }}"
-                           data-accountable-name="{{ $ticket->assignment->accountable->name ?? 'N/A' }}"
-                           data-division-name="{{ $ticket->author->division->name ?? 'N/A' }}"
-                           data-created-at="{{ $ticket->created_at }}"
-                           data-updated-at="{{ $ticket->updated_at }}">
-                            View Assignment
-                        </a>
-                        <a href="#" class="btn btn-link"> Chat </a>
-                        <a href="#" class="btn btn-link"> Solve ticket </a>
-                    </td>
+                    <td colspan="5" class="text-center">No tickets found.</td>
                 </tr>
-            @endforeach
             @endif
         </tbody>
     </table>
 
-
-    <!-- Modal -->
+    <!-- Assignment Modal -->
     <div class="modal fade" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -102,42 +148,61 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var assignmentModal = document.getElementById('assignmentModal');
-            assignmentModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                var ticketId = button.getAttribute('data-ticket-id');
-                var clasification = button.getAttribute('data-clasification');
-                var details = button.getAttribute('data-details');
-                var status = button.getAttribute('data-status');
-                var author = button.getAttribute('data-author');
-                var accountableName = button.getAttribute('data-accountable-name');
-                var divisionName = button.getAttribute('data-division-name');
-                var createdAt = button.getAttribute('data-created-at');
-                var updatedAt = button.getAttribute('data-updated-at');
+    <!-- Chat Modal -->
+    <div class="modal fade" id="answerModal" tabindex="-1" aria-labelledby="answerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="answerModalLabel">Answer from the Support Team</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Answer:</strong></p>
+                    <p id="answerText"></p>
 
-                var modalTicketId = assignmentModal.querySelector('#modal-ticket-id');
-                var modalClasification = assignmentModal.querySelector('#modal-clasification');
-                var modalDetails = assignmentModal.querySelector('#modal-details');
-                var modalStatus = assignmentModal.querySelector('#modal-status');
-                var modalAuthor = assignmentModal.querySelector('#modal-author');
-                var modalAccountableName = assignmentModal.querySelector('#modal-accountable-name');
-                var modalDivisionName = assignmentModal.querySelector('#modal-division-name');
-                var modalCreatedAt = assignmentModal.querySelector('#modal-created-at');
-                var modalUpdatedAt = assignmentModal.querySelector('#modal-updated-at');
+                    <p><strong>Comments:</strong></p>
+                    <p id="comentText"></p>
 
-                modalTicketId.textContent = ticketId;
-                modalClasification.textContent = clasification;
-                modalDetails.textContent = details;
-                modalStatus.textContent = status;
-                modalAuthor.textContent = author;
-                modalAccountableName.textContent = accountableName;
-                modalDivisionName.textContent = divisionName;
-                modalCreatedAt.textContent = createdAt;
-                modalUpdatedAt.textContent = updatedAt;
-            });
-        });
-    </script>
+                    <p><strong>Observations:</strong></p>
+                    <p id="observationText"></p>
+                </div>
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#replyModal"
+                                data-chat-id="" id="replyButton">
+                            Reply
+                        </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Answer Modal -->
+    <div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="replyModalLabel">observations to Support Team</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('assistant.chats.answer') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="chat_id" id="chatId">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="answer" class="form-label">Your Answer</label>
+                            <textarea class="form-control" id="answer" name="answer" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Send</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 @endsection

@@ -69,16 +69,16 @@ class AssignmentController extends Controller
             'accountableid' => 'required|exists:users,id',
         ]);
 
-        // Crear la asignación y guardar en la base de datos
+        // Creates the assignment and saves it in the database
         $assignment = Assignment::create([
             'ticketid' => $request->ticketid,
             'accountableid' => $request->accountableid,
         ]);
 
-        // Cambiar el estado del ticket a 'Assigned'
+        // Changes the status of the ticket to 'Assigned'
         Ticket::where('id', $request->ticketid)->update(['status' => 'Assigned']);
 
-        // Crear un registro en la tabla de chats utilizando el ID de la asignación
+        // Create a chat record using the assignment ID
         Chat::create([
             'assignment_id' => $assignment->id,
             'answer' => null,
@@ -89,34 +89,14 @@ class AssignmentController extends Controller
         return redirect()->route('admin/assignedtickets')->with('success', 'Ticket assigned successfully');
     }
 
-    // Show the form for editing the specified resource.
-    public function edit(string $id)
-    {
-        //
-    }
-
-    // Update the specified resource in storage.
-
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    // Remove the specified resource from storage.
-
-    public function destroy(string $id)
-    {
-        //
-    }
-
+    // Assistant Functions
     public function indexAssignedAssistant(Request $request)
     {
-        // Obtener el ID del usuario logeado
+        // Obtains the ID of the current user
         $userId = auth()->user()->id;
 
+        // Filters the tickets that are assigned to the user
         $query = Ticket::query();
-
-        // Filtrar los tickets que están asignados al usuario logeado
         $query->whereHas('assignment', function ($q) use ($userId) {
             $q->where('accountableid', $userId);
         });
@@ -130,7 +110,10 @@ class AssignmentController extends Controller
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         } else {
-            $query->where('status', 'Assigned');
+            $query->where(function ($q) {
+                $q->where('status', 'Assigned')
+                ->orWhere('status', 'In process');
+            });
         }
 
         if ($request->filled('author')) {
@@ -143,11 +126,43 @@ class AssignmentController extends Controller
             $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
         }
 
-        // Traer los tickets con las relaciones necesarias
+        // Filters the tickets by the necessary fields
         $tickets = $query->with(['author.division', 'assignment.accountable'])->orderBy('created_at', 'DESC')->get();
         $divisions = Division::all();
 
         return view('tickets.assistant.indexassistant', compact('tickets', 'divisions'));
+    }
+
+    public function attend(string $id)
+    {
+        // Filters the ticket and the chat for the specified assignment
+        $ticket = Ticket::findOrFail($id);
+        $chat = Chat::where('assignment_id', $ticket->assignment->id)->first();
+
+        return view('tickets.assistant.editassistant', compact('ticket', 'chat'));
+    }
+
+    public function updateAttend(Request $request, string $id)
+    {
+        // Validates the request
+        $request->validate([
+            'status' => 'required|string',
+            'answer' => 'required|string',
+        ]);
+
+        // Updates the status of the ticket
+        $ticket = Ticket::findOrFail($id);
+        $ticket->update([
+            'status' => $request->input('status'),
+        ]);
+
+        // Updates the answer of the chat associated
+        $chat = Chat::where('assignment_id', $ticket->assignment->id)->first();
+        $chat->update([
+            'answer' => $request->input('answer'),
+        ]);
+
+        return redirect()->route('assistant/tickets')->with('success', 'The ticket has been attended successfully');
     }
 
 }

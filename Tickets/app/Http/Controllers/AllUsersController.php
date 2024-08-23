@@ -7,6 +7,7 @@ use App\Models\Division;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class AllUsersController extends Controller
 {
@@ -130,5 +131,135 @@ class AllUsersController extends Controller
 
         return redirect()->route('admin/users')->with('success', 'User deleted successfully.');
     }
+
+
+    ////////////////////// Update profiles //////////////////////
+    // Admin profile
+    public function profilepage()
+    {
+        $user = auth()->user();
+        return view('profile', compact('user'));
+    }
+
+    public function updateAdmin(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'password' => 'nullable|string|confirmed',
+            'url' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+        ]);
+
+        //User data update
+        $user->name = $request->name;
+
+        // Update the password if it's changed
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // User image handling
+        if ($request->hasFile('url')) {
+            // Delete current image
+            if ($user->url) {
+                \Storage::disk('public')->delete($user->url);
+            }
+
+            // Store the new image
+            $imagePath = $request->file('url')->store('users', 'public');
+            $user->url = $imagePath;
+        }
+
+        // Save changes
+        $user->save();
+
+        return redirect()->route('admin/profile')->with('success', 'Info updated successfully.');
+    }
+
+////////////////////// assistant profile //////////////////////
+    public function assistantprofilepage()
+    {
+        $user = auth()->user();
+        return view('assistantprofile', compact('user'));
+    }
+    public function updateAssistant(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'password' => 'nullable|string|confirmed',
+            'url' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+        ]);
+
+        //User data update
+        $user->name = $request->name;
+
+        // Update the password if it's changed
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // User image handling
+        if ($request->hasFile('url')) {
+            // Delete current image
+            if ($user->url) {
+                \Storage::disk('public')->delete($user->url);
+            }
+
+            // Store the new image
+            $imagePath = $request->file('url')->store('users', 'public');
+            $user->url = $imagePath;
+        }
+
+        // Save changes
+        $user->save();
+
+        return redirect()->route('assistant/profile')->with('success', 'Info updated successfully.');
+    }
+////////////////////// user profile //////////////////////
+    public function userprofile()
+    {
+        $user = auth()->user();
+        return view('userprofile', compact('user'));
+    }
+
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'password' => 'nullable|string|confirmed',
+            'url' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+        ]);
+
+        //User data update
+        $user->name = $request->name;
+
+        // Update the password if it's changed
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // User image handling
+        if ($request->hasFile('url')) {
+            // Delete current image
+            if ($user->url) {
+                \Storage::disk('public')->delete($user->url);
+            }
+
+            // Store the new image
+            $imagePath = $request->file('url')->store('users', 'public');
+            $user->url = $imagePath;
+        }
+
+        // Save changes
+        $user->save();
+
+        return redirect()->route('profile')->with('success', 'Info updated successfully.');
+    }
+
 }
 

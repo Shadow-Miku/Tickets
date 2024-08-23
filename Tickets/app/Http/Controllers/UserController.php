@@ -13,8 +13,4 @@ class UserController extends Controller
         return view('userprofile');
     }
 
-    public function about()
-    {
-        return view('about');
-    }
 }
