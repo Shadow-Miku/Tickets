@@ -1,3 +1,28 @@
+////////////////////// User Layout //////////////////////
+    // Profile Modal
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelector('button#profileImageButton img').addEventListener('click', function (e) {
+            e.preventDefault();
+            var profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
+            profileModal.show();
+        });
+
+        // Hover effect for the profile image
+        const profileImageLink = document.querySelector('#profileModal a');
+        const hoverText = profileImageLink.querySelector('div');
+
+        profileImageLink.addEventListener('mouseover', () => {
+            hoverText.classList.remove('d-none');
+            profileImageLink.querySelector('img').classList.add('darken');
+        });
+
+        profileImageLink.addEventListener('mouseout', () => {
+            hoverText.classList.add('d-none');
+            profileImageLink.querySelector('img').classList.remove('darken');
+        });
+    });
+
+
 
 ////////////////////// Tickets Modals //////////////////////
 // Ticlet Details Modal

@@ -1,0 +1,14 @@
+/* Profile Image on Modal*/
+.profile-image {
+    transform: scale(1);
+    transition: filter 0.3s ease;
+}
+
+.profile-image.darken {
+    filter: brightness(50%);
+}
+
+.user-name {
+    font-size: 1.5rem; /* Adjust as needed */
+    margin-top: 1rem;
+}

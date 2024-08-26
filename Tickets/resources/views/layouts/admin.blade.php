@@ -47,7 +47,7 @@
                 <div class="btn-group">
                     <!-- Profile image button (deploys modal) -->
                     <button type="button" class="btn" id="profileImageButton">
-                        <img src="{{ asset('storage/' . Auth::user()->url) }}" alt="Profile Image" class="rounded-circle" width="40" height="40">
+                        <img src="{{ asset('storage/' . Auth::user()->url) }}" alt="Profile Image" class="rounded-circle object-fit-cover" style="width: 40px; height: 40px; object-fit: cover">
                     </button>
 
                     <!-- Dropdown button (deployed by name) -->

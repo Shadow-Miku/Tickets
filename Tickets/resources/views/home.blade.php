@@ -3,19 +3,22 @@
 @section('title', 'Home')
 
 @section('contents')
-<header class="bg-white shadow">
-    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold text-gray-900">
-            Home
-        </h1>
+<header class="bg-white shadow-sm">
+    <div class="container py-4">
+        <h1 class="text-3xl font-bold text-gray-900">Home</h1>
     </div>
 </header>
+
 <hr />
+
 <main>
-    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="px-4 py-6 sm:px-0">
-            <div class="border-4 border-dashed border-gray-200 rounded-lg h-96">
-                HOmepage
+    <div class="container mt-4">
+        <!-- Welcome Section -->
+        <div class="d-flex align-items-center mb-4">
+            <img src="{{ asset('storage/' . Auth::user()->url) }}" alt="Profile" class="rounded-circle me-3" style="height: 70px; width: 70px; object-fit: cover">
+            <div>
+                <h4 class="fw-bold">Bienvenido, {{ Auth::user()->name }}!</h4>
+                <p class="text-muted">Usuario</p>
             </div>
         </div>
     </div>
