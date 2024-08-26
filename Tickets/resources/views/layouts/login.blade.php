@@ -20,7 +20,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark position-fixed w-100">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">F.R.E.S.H</a>
             <ul class="navbar-nav ms-auto">
