@@ -9,7 +9,7 @@
     </div>
     <hr class="mb-4" />
 
-    <form method="GET" action="{{ route('admin/assignedtickets') }}" class="row g-3 mb-4">
+    <form method="GET" action="{{ route('admin.assignedtickets') }}" class="row g-3 mb-4">
         <div class="col-md-2">
             <select name="division" class="form-select">
                 <option value="">Select Division</option>

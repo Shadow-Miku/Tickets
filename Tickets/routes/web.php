@@ -99,7 +99,9 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::delete('/admin/users/destroy/{id}', [AllUsersController::class, 'destroy'])->name('admin/users/destroy');
 
     // Ticket Managment
-    Route::get('/admin/assignedtickets', [AssignmentController::class, 'indexAssignedAdmin'])->name('admin/assignedtickets');
+    Route::get('/admin/assignedtickets', [AssignmentController::class, 'indexAssignedAdmin'])->name('admin.assignedtickets');
+    Route::get('/admin/ticketsPDF', [TicketController::class, 'generatePdfAdmin'])->name('admin.ticketsPDF');
+
 
     // Assigment Managment
     Route::get('/admin/tickets/assignAdmin/{id}', [AssignmentController::class, 'assignAdmin'])->name('admin/tickets/assignAdmin'); // create

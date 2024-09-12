@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Division;
 use App\Models\User;
 use App\Models\Ticket;
 use App\Models\Assignment;
@@ -68,6 +69,7 @@ class HomeController extends Controller
 
     public function adminHome()
     {
+        $divisions = Division::all();
         // Obtain the current month and year
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
@@ -108,7 +110,8 @@ class HomeController extends Controller
             'totalTickets',
             'assignedTickets',
             'pendingTickets',
-            'resolvedTickets'
+            'resolvedTickets',
+            'divisions'
         ));
     }
 

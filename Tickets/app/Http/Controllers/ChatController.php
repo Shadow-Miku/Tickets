@@ -46,7 +46,7 @@ class ChatController extends Controller
         $chat->observation = $request->observation;
         $chat->save();
 
-        return redirect()->route('admin/assignedtickets')->with('success', 'Obervation sent successfully');
+        return redirect()->route('admin.assignedtickets')->with('success', 'Obervation sent successfully');
     }
 
 }

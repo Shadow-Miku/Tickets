@@ -83,4 +83,6 @@ class AuthController extends Controller
     {
         return view('userprofile');
     }
+
+    // En el constructor del controlador admin (AdminController.php)
 }

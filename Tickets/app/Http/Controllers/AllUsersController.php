@@ -18,8 +18,8 @@ class AllUsersController extends Controller
     {
         $users = User::all();
         $currentUserId = auth()->user()->id; // Authenticated User ID
-        $division = \App\Models\Division::all();
-        return view('users.index', compact('users','currentUserId','division'));
+        $divisions = \App\Models\Division::all();
+        return view('users.index', compact('users','currentUserId','divisions'));
     }
 
     /**
@@ -138,7 +138,8 @@ class AllUsersController extends Controller
     public function profilepage()
     {
         $user = auth()->user();
-        return view('profile', compact('user'));
+        $divisions = Division::all();
+        return view('profile', compact('user','divisions'));
     }
 
     public function updateAdmin(Request $request, $id)

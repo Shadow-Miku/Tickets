@@ -126,13 +126,13 @@
                             <ul class="list-group list-group-flush">
                                 <!-- All Registered Tickets -->
                                 <li class="list-group-item bg-dark border-0">
-                                    <a href="{{ route('admin/assignedtickets') }}" class="text-white d-flex align-items-center py-2 px-4 rounded hover-effect @if(Route::currentRouteName() == 'admin/assignedtickets') active-link @endif">
+                                    <a href="{{ route('admin.assignedtickets') }}" class="text-white d-flex align-items-center py-2 px-4 rounded hover-effect @if(Route::currentRouteName() == 'admin/assignedtickets') active-link @endif">
                                         <i class="bi bi-clipboard-check me-3"></i> Tickets
                                     </a>
                                 </li>
-                                <!-- Generate pdf of specific Tickets -->
+                                <!-- Generate PDF of specific Tickets -->
                                 <li class="list-group-item bg-dark border-0 mb-2">
-                                    <a href="#" class="text-white d-flex align-items-center py-2 px-4 rounded hover-effect @if(Route::currentRouteName() == '#') active-link @endif">
+                                    <a href="#" class="text-white d-flex align-items-center py-2 px-4 rounded hover-effect" data-bs-toggle="modal" data-bs-target="#pdfFilterModal">
                                         <i class="bi bi-file-pdf me-3"></i> Tickets PDF
                                     </a>
                                 </li>
@@ -158,6 +158,59 @@
         <!-- CONTENTS -->
         <div class="flex-grow-1 p-4">
             <div>@yield('contents')</div>
+        </div>
+    </div>
+
+    <!-- Modal para filtrar tickets y generar PDF -->
+    <div class="modal fade" id="pdfFilterModal" tabindex="-1" aria-labelledby="pdfFilterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pdfFilterModalLabel">Filtrar Tickets para Generar PDF</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="GET" action="{{ route('admin.ticketsPDF') }}" class="row g-3">
+                        <div class="col-md-6">
+                            <select name="division" class="form-select">
+                                <option value="">Select Division</option>
+                                @if(isset($divisions) && $divisions->count() > 0)
+                                    @foreach($divisions as $division)
+                                        <option value="{{ $division->id }}" {{ request('division') == $division->id ? 'selected' : '' }}>
+                                            {{ $division->name }}
+                                        </option>
+                                    @endforeach
+                                @else
+                                    <option value="">No divisions available</option>
+                                @endif
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <select name="status" class="form-select">
+                                <option value="">Select Status</option>
+                                <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="Assigned" {{ request('status') == 'Assigned' ? 'selected' : '' }}>Assigned</option>
+                                <option value="In process" {{ request('status') == 'In process' ? 'selected' : '' }}>In process</option>
+                                <option value="Cancelled" {{ request('status') == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                <option value="Never Solved" {{ request('status') == 'Never Solved' ? 'selected' : '' }}>Never Solved</option>
+                                <option value="Completed" {{ request('status') == 'Completed' ? 'selected' : '' }}>Completed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" name="author" placeholder="Author" value="{{ request('author') }}" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="date" name="start_date" value="{{ request('start_date') }}" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="date" name="end_date" value="{{ request('end_date') }}" class="form-control" />
+                        </div>
+                        <div class="col-md-12 d-grid">
+                            <button type="submit" class="btn btn-secondary">Generar PDF</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 

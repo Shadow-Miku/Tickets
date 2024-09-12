@@ -86,7 +86,7 @@ class AssignmentController extends Controller
             'observation' => null,
         ]);
 
-        return redirect()->route('admin/assignedtickets')->with('success', 'Ticket assigned successfully');
+        return redirect()->route('admin.assignedtickets')->with('success', 'Ticket assigned successfully');
     }
 
     // Assistant Functions

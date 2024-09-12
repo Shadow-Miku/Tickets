@@ -77,4 +77,36 @@ class TicketController extends Controller
         return redirect()->route('user/tickets')->with('success', 'Ticket status changed to Cancelled successfully');
     }
 
+    public function generatePdfAdmin(Request $request)
+    {
+        $query = Ticket::query();
+        // Obtener las divisiones
+        $divisions = Division::all();
+
+        if ($request->filled('division')) {
+            $query->whereHas('author.division', function($q) use ($request) {
+                $q->where('id', $request->division);
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('author')) {
+            $query->whereHas('author', function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->author . '%');
+            });
+        }
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        }
+
+        $tickets = $query->with(['author.division', 'assignment.accountable'])->orderBy('created_at', 'DESC')->get();
+
+        return view('tickets.admin.ticketsPDF', compact('tickets'));
+    }
+
+
 }
