@@ -58,9 +58,8 @@
 
                                     @if($tk->status !== 'Cancelled' && $tk->status !== 'Assigned' && $tk->status !== 'In process' && $tk->status !== 'Never Solved' && $tk->status !== 'Completed')
                                         <a href="{{ route('user/tickets/edit', $tk->id)}}" class="btn btn-success btn-sm">Edit</a>
-                                        <form action="{{ route('user/tickets/cancell', $tk->id) }}" method="POST" onsubmit="return confirm('Are you sure?')" class="d-inline">
+                                        <form action="{{ route('user/tickets/cancel', $tk->id) }}" method="POST" onsubmit="return confirm('Are you sure?')" class="d-inline">
                                             @csrf
-                                            @method('PUT')
                                             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                         </form>
                                     @else

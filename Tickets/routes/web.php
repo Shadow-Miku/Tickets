@@ -50,7 +50,7 @@ Route::middleware(['auth', 'user-access:user'])->group(function () {
     Route::get('/user/tickets/show/{id}', [TicketController::class, 'showUser'])->name('user/tickets/showuser');
     Route::get('/user/tickets/edit/{id}', [TicketController::class, 'editUser'])->name('user/tickets/edit');
     Route::put('/user/tickets/update/{id}', [TicketController::class, 'update'])->name('user/tickets/update');
-    Route::get('/user/tickets/cancell/{id}', [TicketController::class, 'cancell'])->name('user/tickets/cancell');
+    Route::post('/user/tickets/cancel/{id}', [TicketController::class, 'cancel'])->name('user/tickets/cancel');
     Route::post('/user/chats/reply', [ChatController::class, 'reply'])->name('user.chats.reply');
 });
 

@@ -68,7 +68,7 @@ class TicketController extends Controller
     /**
      * Remove the specified ticket from storage. (Pending usage)
      */
-    public function cancell(string $id)
+    public function cancel(string $id)
     {
         $ticket = Ticket::findOrFail($id);
         $ticket->status = 'Cancelled';
